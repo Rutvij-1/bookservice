@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package bookservice;
+
+option java_multiple_files = true;
+option java_package = "bookservice";
+
+import "book_message.proto";
+
+message DeleteBookRequest {
+	string isbn = 1;
+}
+
+message DeleteBookResponse {
+	bool status = 1;
+	string message = 2;
+}

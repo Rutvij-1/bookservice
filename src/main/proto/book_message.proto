@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package bookservice;
+
+option java_multiple_files = true;
+option java_package = "bookservice";
+
+message Book {
+	string isbn = 1;
+	string title = 2;
+	repeated string authors = 3;
+	int32 page_count = 4;
+}
