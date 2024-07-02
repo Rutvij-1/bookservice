@@ -7,6 +7,7 @@ import io.grpc.StatusRuntimeException;
 import bookservice.Book;
 import bookservice.BookServiceGrpc;
 
+import java.util.Arrays;
 import java.util.List;
 
 import bookservice.AddBookRequest;
@@ -77,10 +78,11 @@ public class BookServiceGrpcClient {
         GetBooksRequest request = GetBooksRequest.newBuilder().setSearchQuery(searchQuery).build();
         try {
             GetBooksResponse response = blockingStub.getBooks(request);
+            Integer counter = 1;
             System.out.println("The following books were found in storage:");
             for (Book book : response.getBooksList()) {
-                System.out.println("ISBN: " + book.getIsbn());
-                System.out.println("Title: " + book.getTitle());
+                System.out.println(String.valueOf(counter) + ". ISBN: " + book.getIsbn());
+                System.out.println(" ".repeat(String.valueOf(counter).length() + 2) + "Title: " + book.getTitle());
                 String authorListString = "";
                 for (String author : book.getAuthorsList()) {
                     authorListString += author + ", ";
@@ -88,8 +90,9 @@ public class BookServiceGrpcClient {
                 if (authorListString.length() > 0) {
                     authorListString = authorListString.substring(0, authorListString.length() - 2);
                 }
-                System.out.println("Authors: " + authorListString);
-                System.out.println("Page Count: " + book.getPageCount());
+                System.out.println(" ".repeat(String.valueOf(counter).length() + 2) + "Authors: " + authorListString);
+                System.out.println(" ".repeat(String.valueOf(counter).length() + 2) + "Page Count: " + book.getPageCount());
+                counter++;
             }
         } catch (StatusRuntimeException e) {
             System.err.println("RPC failed with error message: " + e.getStatus());
@@ -101,7 +104,35 @@ public class BookServiceGrpcClient {
         ManagedChannel channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
 
         try {
+            BookServiceGrpcClient client = new BookServiceGrpcClient(channel);
+            client.addBook("0596009208", "Programming Python", List.of("Mark Lutz"), 220);
+            System.out.println("-----------------------------------------");
 
+            client.addBook("9780201633610", "Design Patterns: Elements of Reusable Object-Oriented Software", Arrays.asList("Erich Gamma", "John Vlissides", "Richard Helm", "Ralph Johnson"), 395);
+            System.out.println("-----------------------------------------");
+
+            client.addBook("978020163361", "Design Patterns: Elements of Reusable Object-Oriented Software", Arrays.asList("Erich Gamma", "John Vlissides", "Richard Helm", "Ralph Johnson"), 395);
+            System.out.println("-----------------------------------------");
+
+            client.getBooks("");
+            System.out.println("-----------------------------------------");
+
+            client.updateBook("0596009208", "Harry Potter and the Sorcerer's Stone", List.of("J.K. Rowling"), 309);
+            System.out.println("-----------------------------------------");
+
+            client.updateBook("9780134685991", "Effective Java", List.of("Joshua Bloch"), 400);
+            System.out.println("-----------------------------------------");
+
+            client.getBooks("");
+            System.out.println("-----------------------------------------");
+
+            client.deleteBook("9780201633610");
+            System.out.println("-----------------------------------------");
+
+            client.deleteBook("978020633610");
+            System.out.println("-----------------------------------------");
+
+            client.getBooks("");
         } finally {
             channel.shutdown();
         }

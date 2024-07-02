@@ -16,5 +16,5 @@ service BookService {
 	rpc AddBook (AddBookRequest) returns (AddBookResponse) {}
 	rpc UpdateBook (UpdateBookRequest) returns (UpdateBookResponse) {}
 	rpc DeleteBook (DeleteBookRequest) returns (DeleteBookResponse) {}
-	rpc GetBooks (GetABooksRequest) returns (GetBooksResponse) {}
+	rpc GetBooks (GetBooksRequest) returns (GetBooksResponse) {}
 }

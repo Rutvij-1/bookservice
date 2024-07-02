@@ -29,14 +29,14 @@ public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
                     .build();
         } else if (bookStorage.containsKey(request.getBook().getIsbn())) {
             // Check if the book already exists in storage
-            response = AddBookResponse.newBuilder().setStatus(false).setMessage("Book with ISBN number" + request
+            response = AddBookResponse.newBuilder().setStatus(false).setMessage("Book with ISBN number " + request
                     .getBook()
                     .getIsbn() + " already exists")
                     .build();
         } else {
             // Add book to storage
             bookStorage.put(request.getBook().getIsbn(), request.getBook());
-            response = AddBookResponse.newBuilder().setStatus(true).setMessage("Book with ISBN number" + request
+            response = AddBookResponse.newBuilder().setStatus(true).setMessage("Book with ISBN number " + request
                     .getBook()
                     .getIsbn() + " added successfully")
                     .build();
@@ -52,13 +52,13 @@ public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
             // Check if the book exists in storage and replace it
             bookStorage.remove(request.getBook().getIsbn());
             bookStorage.put(request.getBook().getIsbn(), request.getBook());
-            response = UpdateBookResponse.newBuilder().setStatus(true).setMessage("Book with ISBN number" + request
+            response = UpdateBookResponse.newBuilder().setStatus(true).setMessage("Book with ISBN number " + request
                     .getBook()
                     .getIsbn() + " updated successfully")
                     .build();
         } else {
             // Book not found in storage
-            response = UpdateBookResponse.newBuilder().setStatus(false).setMessage("Book with ISBN number" + request
+            response = UpdateBookResponse.newBuilder().setStatus(false).setMessage("Book with ISBN number " + request
                     .getBook()
                     .getIsbn() + " not found")
                     .build();
@@ -73,12 +73,12 @@ public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
         if (bookStorage.containsKey(request.getIsbn())) {
             // Check if the book exists in storage and remove it
             bookStorage.remove(request.getIsbn());
-            response = DeleteBookResponse.newBuilder().setStatus(true).setMessage("Book with ISBN number" + request
+            response = DeleteBookResponse.newBuilder().setStatus(true).setMessage("Book with ISBN number " + request
                     .getIsbn() + " deleted successfully")
                     .build();
         } else {
             // Book not found in storage
-            response = DeleteBookResponse.newBuilder().setStatus(false).setMessage("Book with ISBN number" + request
+            response = DeleteBookResponse.newBuilder().setStatus(false).setMessage("Book with ISBN number " + request
                     .getIsbn() + " not found")
                     .build();
         }
