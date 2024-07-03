@@ -5,10 +5,11 @@ package bookservice;
 option java_multiple_files = true;
 option java_package = "bookservice";
 
-import "book_message.proto";
-
 message UpdateBookRequest {
-	Book book = 1;
+	string isbn = 1;
+	optional string title = 2;
+	repeated string authors = 3;
+	optional int32 page_count = 4;
 }
 
 message UpdateBookResponse {

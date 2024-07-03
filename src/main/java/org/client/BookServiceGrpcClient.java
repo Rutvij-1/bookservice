@@ -8,6 +8,8 @@ import bookservice.Book;
 import bookservice.BookServiceGrpc;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import bookservice.AddBookRequest;
@@ -47,7 +49,17 @@ public class BookServiceGrpcClient {
     public void updateBook(String isbn, String title, List<String> authors, Integer pageCount) {
         Book book = Book.newBuilder().setIsbn(isbn).setTitle(title).setPageCount(pageCount).addAllAuthors(authors)
                 .build();
-        UpdateBookRequest request = UpdateBookRequest.newBuilder().setBook(book).build();
+        UpdateBookRequest.Builder requestBuilder = UpdateBookRequest.newBuilder().setIsbn(isbn);
+        if (title != null && !title.isEmpty()) {
+            requestBuilder.setTitle(title);
+        }
+        if (authors != null) {
+            requestBuilder.addAllAuthors(authors);
+        }
+        if (pageCount >0) {
+            requestBuilder.setPageCount(pageCount);
+        }
+        UpdateBookRequest request = requestBuilder.build();
         try {
             UpdateBookResponse response = blockingStub.updateBook(request);
             if (response.getStatus()) {
@@ -118,6 +130,9 @@ public class BookServiceGrpcClient {
             System.out.println("-----------------------------------------");
 
             client.updateBook("0596009208", "Harry Potter and the Sorcerer's Stone", List.of("J.K. Rowling"), 309);
+            System.out.println("-----------------------------------------");
+
+            client.updateBook("9780201633610", "Game of Thrones 1", Collections.<String>emptyList(), 0);
             System.out.println("-----------------------------------------");
 
             client.updateBook("9780134685991", "Effective Java", List.of("Joshua Bloch"), 400);

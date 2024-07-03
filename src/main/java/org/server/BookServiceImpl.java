@@ -1,6 +1,8 @@
 package org.server;
 
 import java.util.HashMap;
+import java.util.List;
+
 import org.utils.ISBNValidator;
 
 import io.grpc.stub.StreamObserver;
@@ -30,15 +32,15 @@ public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
         } else if (bookStorage.containsKey(request.getBook().getIsbn())) {
             // Check if the book already exists in storage
             response = AddBookResponse.newBuilder().setStatus(false).setMessage("Book with ISBN number " + request
-                    .getBook()
-                    .getIsbn() + " already exists")
+                            .getBook()
+                            .getIsbn() + " already exists")
                     .build();
         } else {
             // Add book to storage
             bookStorage.put(request.getBook().getIsbn(), request.getBook());
             response = AddBookResponse.newBuilder().setStatus(true).setMessage("Book with ISBN number " + request
-                    .getBook()
-                    .getIsbn() + " added successfully")
+                            .getBook()
+                            .getIsbn() + " added successfully")
                     .build();
         }
         responseObserver.onNext(response);
@@ -47,20 +49,20 @@ public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
 
     @Override
     public void updateBook(UpdateBookRequest request, StreamObserver<UpdateBookResponse> responseObserver) {
+        String isbn = request.getIsbn();
         UpdateBookResponse response;
-        if (bookStorage.containsKey(request.getBook().getIsbn())) {
+        if (bookStorage.containsKey(isbn)) {
             // Check if the book exists in storage and replace it
-            bookStorage.remove(request.getBook().getIsbn());
-            bookStorage.put(request.getBook().getIsbn(), request.getBook());
-            response = UpdateBookResponse.newBuilder().setStatus(true).setMessage("Book with ISBN number " + request
-                    .getBook()
-                    .getIsbn() + " updated successfully")
+            String title = request.hasTitle() ? request.getTitle() : bookStorage.get(isbn).getTitle();
+            Integer pageCount = request.hasPageCount() ? request.getPageCount() : bookStorage.get(isbn).getPageCount();
+            List<String> authors = request.getAuthorsList().isEmpty() ? bookStorage.get(isbn).getAuthorsList() : request.getAuthorsList();
+            bookStorage.remove(isbn);
+            bookStorage.put(isbn, Book.newBuilder().setIsbn(isbn).setTitle(title).addAllAuthors(authors).setPageCount(pageCount).build());
+            response = UpdateBookResponse.newBuilder().setStatus(true).setMessage("Book with ISBN number " + isbn + " updated successfully")
                     .build();
         } else {
             // Book not found in storage
-            response = UpdateBookResponse.newBuilder().setStatus(false).setMessage("Book with ISBN number " + request
-                    .getBook()
-                    .getIsbn() + " not found")
+            response = UpdateBookResponse.newBuilder().setStatus(false).setMessage("Book with ISBN number " + isbn + " not found")
                     .build();
         }
         responseObserver.onNext(response);
@@ -74,12 +76,12 @@ public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
             // Check if the book exists in storage and remove it
             bookStorage.remove(request.getIsbn());
             response = DeleteBookResponse.newBuilder().setStatus(true).setMessage("Book with ISBN number " + request
-                    .getIsbn() + " deleted successfully")
+                            .getIsbn() + " deleted successfully")
                     .build();
         } else {
             // Book not found in storage
             response = DeleteBookResponse.newBuilder().setStatus(false).setMessage("Book with ISBN number " + request
-                    .getIsbn() + " not found")
+                            .getIsbn() + " not found")
                     .build();
         }
         responseObserver.onNext(response);
